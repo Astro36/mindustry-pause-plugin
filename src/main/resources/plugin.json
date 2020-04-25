@@ -1,8 +1,7 @@
 {
-    "name": "mindustry-plugin-kt",
-    "displayName": "Mindustry Plugin Kotlin",
+    "name": "mindustry-pause-plugin",
     "author": "Seungjae Park",
-    "description": "Mindustry Server Plugin Template written by Kotlin",
+    "description": "Add Commands to Pause and Resume the Game",
     "version": "1.0",
-    "main": "ExamplePlugin"
+    "main": "PausePlugin"
 }
