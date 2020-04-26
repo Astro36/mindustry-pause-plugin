@@ -1,7 +1,8 @@
 {
-    "name": "mindustry-pause-plugin",
-    "author": "Seungjae Park",
-    "description": "Add Commands to Pause and Resume the Game",
-    "version": "1.0",
-    "main": "PausePlugin"
+  "name": "mindustry-pause-plugin",
+  "displayName": "Game Pause",
+  "author": "Seungjae Park",
+  "description": "Add Commands to Pause and Resume the Game on Server",
+  "version": "1.0",
+  "main": "PausePlugin"
 }

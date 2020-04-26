@@ -1,6 +1,3 @@
-import org.gradle.jvm.tasks.Jar
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-
 plugins {
     kotlin("jvm") version "1.3.72"
 }
@@ -16,10 +13,16 @@ dependencies {
     compileOnly("com.github.Anuken.Mindustry:core:v104.6")
 }
 
-tasks.withType<KotlinCompile> {
-    kotlinOptions.jvmTarget = "1.8"
-}
+tasks {
+    compileKotlin {
+        kotlinOptions.jvmTarget = "1.8"
+    }
 
-tasks.withType<Jar> {
-    from(configurations.compileClasspath.get().map { if (it.isDirectory) it else zipTree(it) })
+    compileTestKotlin {
+        kotlinOptions.jvmTarget = "1.8"
+    }
+
+    jar {
+        from(configurations.compileClasspath.get().map { if (it.isDirectory) it else zipTree(it) })
+    }
 }
