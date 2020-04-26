@@ -1,49 +1,34 @@
-# Mindustry Plugin Kotlin
+# Mindustry Pause Plugin
 
-> [Mindustry](https://mindustrygame.github.io/) Server Plugin Template written by [Kotlin](https://kotlinlang.org/)
+> [Mindustry](https://mindustrygame.github.io/) Plugin: Add Commands to Pause and Resume the Game on Server
 
-This template was inspired by [Anuken/ExamplePlugin](https://github.com/Anuken/ExamplePlugin).
+## ChangeLog
 
-## Setup
+See [CHANGELOG](./CHANGELOG.md)
 
-1. Clone the repo:
+## Features
 
-    ```bash
-    $ git clone https://github.com/Astro36/mindustry-plugin-kt.git
-    ```
+- Add `/pause` and `/resume`.
 
-2. Set your plugin information at `src/main/resources/plugin.json`:
+## Installation
 
-    ```json
-    {
-        "name": "Your Plugin Name",
-        "displayName": "Your Plugin Display Name (Default=name)",
-        "author": "Developer Name",
-        "description": "Your Plugin Description",
-        "version": "1.0",
-        "main": "ExamplePlugin",
-        "minGameVersion": null
-    }
-    ```
+Place the plugin(jar) file in the server's `config/mods` directory and restart the server.
 
-    `minGameVersion` must be convertible to integer.
+## Usages
 
-3. Delete original `LICENSE` file.
-4. Check `src/main/kotlin/ExamplePlugin.kt` for some basic commands and event handlers.
+### Client Command
 
-## Build
+| Command  | Description      |
+| -------- | ---------------- |
+| `pause`  | Pause the game.  |
+| `resume` | Resume the game. |
 
-```bash
-$ ./gradlew jar
-```
+### Server Command
 
-The created jar file is located in `build/libs` directory.
-
-## Apply Plugin
-
-Place the created jar file in the server's `config/mods` directory and restart the server.
-
-You can check the currently installed plugins/mods by running the `mods` command.
+| Command  | Description      |
+| -------- | ---------------- |
+| `pause`  | Pause the game.  |
+| `resume` | Resume the game. |
 
 ## License
 
@@ -71,4 +56,4 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ```
 
-Mindustry Plugin Kotlin Template is licensed under the [MIT License](./LICENSE).
+Mindustry Pause Plugin is licensed under the [MIT License](./LICENSE).
