@@ -2,27 +2,19 @@ import arc.Events
 import arc.util.CommandHandler
 import arc.util.Log
 import arc.util.Time
-import arc.util.pooling.Pools
 import mindustry.Vars
 import mindustry.core.GameState
 import mindustry.game.EventType
 import mindustry.gen.Call
-import mindustry.io.TypeIO
-import mindustry.net.Net
-import mindustry.net.Net.SendMode
-import mindustry.net.Packets.InvokePacket
 import mindustry.plugin.Plugin
-import java.nio.ByteBuffer
 
 
-class PausePlugin : Plugin() {
-    private val reflectedNetActiveField = Net::class.java.getDeclaredField("active").apply { isAccessible = true }
-    private var gamePaused = false
+public class PausePlugin : Plugin() {
     private var lastForceSync = 0L
 
     init {
         Events.on(EventType.Trigger.update) {
-            if (gamePaused) {
+            if (Vars.state.isPaused) {
                 if (Time.timeSinceMillis(lastForceSync) >= 1000L) {
                     lastForceSync = Time.millis()
                     forceSync()
@@ -51,43 +43,35 @@ class PausePlugin : Plugin() {
         }
     }
 
-    private fun checkGameState(state: GameState.State): Boolean {
-        return Vars.state.`is`(state)
-    }
-
     private fun forceGameState(state: GameState.State) {
-        reflectedNetActiveField.setBoolean(Vars.net, state != GameState.State.paused)
         Vars.state.set(state)
-        gamePaused = (state == GameState.State.paused)
     }
 
-    private fun forceSendMessage(message: String) {
-        val buf = ByteBuffer.allocate(4096)
-        val packet = Pools.obtain(InvokePacket::class.java) { InvokePacket() } as InvokePacket
-        packet.writeBuffer = buf
-        packet.priority = 0
-        packet.type = 53
-        buf.position(0)
-        TypeIO.writeString(buf, message)
-        packet.writeLength = buf.position()
-        Vars.net.send(packet, SendMode.tcp)
-    }
-
-    private fun forceSync() {
+    private fun forceSync(loadingFragment: Boolean = false) {
         Vars.playerGroup.updateEvents()
         Vars.playerGroup.forEach { player ->
             player.info.lastSyncTime = Time.millis()
-            Call.onWorldDataBegin(player.con)
+            if (loadingFragment) {
+                Call.onWorldDataBegin(player.con)
+            }
             Vars.netServer.sendWorldData(player)
         }
     }
 
+    private fun injectPausableGameState() {
+        if (Vars.state !is PausableGameState) {
+            Log.info("copy and change")
+            Vars.state = PausableGameState.copyFrom(Vars.state)
+        }
+    }
+
     private fun pauseGame() {
-        when {
-            checkGameState(GameState.State.playing) -> {
+        when (Vars.state.state) {
+            GameState.State.playing -> {
+                injectPausableGameState()
                 forceGameState(GameState.State.paused)
             }
-            checkGameState(GameState.State.paused) -> {
+            GameState.State.paused -> {
                 throw PauseException("The game is already paused.")
             }
             else -> {
@@ -97,12 +81,12 @@ class PausePlugin : Plugin() {
     }
 
     private fun resumeGame() {
-        when {
-            checkGameState(GameState.State.paused) -> {
+        when (Vars.state.state) {
+            GameState.State.paused -> {
                 forceGameState(GameState.State.playing)
-                forceSync()
+                forceSync(true)
             }
-            checkGameState(GameState.State.playing) -> {
+            GameState.State.playing -> {
                 throw PauseException("The game is already resumed.")
             }
             else -> {
@@ -114,13 +98,13 @@ class PausePlugin : Plugin() {
     private fun executePauseCommand() {
         try {
             pauseGame()
-            forceSendMessage("[scarlet]Game paused.")
+            Call.sendMessage("[scarlet]Game paused.")
             Log.info("Game paused.")
         } catch (e: PauseException) {
-            forceSendMessage("[orange]${e.message}")
+            Call.sendMessage("[orange]${e.message}")
             Log.warn(e.message)
         } catch (e: Exception) {
-            forceSendMessage("[crimson]Fail to pause the game.")
+            Call.sendMessage("[crimson]Fail to pause the game.")
             Log.err("Fail to pause the game.")
         }
     }
@@ -128,13 +112,13 @@ class PausePlugin : Plugin() {
     private fun executeResumeCommand() {
         try {
             resumeGame()
-            forceSendMessage("[green]Game resumed.")
+            Call.sendMessage("[green]Game resumed.")
             Log.info("Game resumed.")
         } catch (e: PauseException) {
-            forceSendMessage("[orange]${e.message}")
+            Call.sendMessage("[orange]${e.message}")
             Log.warn(e.message)
         } catch (e: Exception) {
-            forceSendMessage("[crimson]Fail to pause the game.")
+            Call.sendMessage("[crimson]Fail to pause the game.")
             Log.err("Fail to resume the game.")
         }
     }

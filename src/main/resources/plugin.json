@@ -3,6 +3,6 @@
   "displayName": "Game Pause",
   "author": "Seungjae Park",
   "description": "Add Commands to Pause and Resume the Game on Server",
-  "version": "1.0",
+  "version": "1.1",
   "main": "PausePlugin"
 }
