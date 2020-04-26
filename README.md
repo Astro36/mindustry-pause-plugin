@@ -1,6 +1,6 @@
 # Mindustry Pause Plugin
 
-> [Mindustry](https://mindustrygame.github.io/) Plugin: Add Commands to Pause and Resume the Game on Server
+> [Mindustry](https://mindustrygame.github.io/) Server Plugin: Add Commands to Pause and Resume the Game on Server
 
 ## ChangeLog
 
@@ -20,21 +20,19 @@ Place the plugin(jar) file in the server's `config/mods` directory and restart t
 
 | Command  | Description      |
 | -------- | ---------------- |
-| `pause`  | Pause the game.  |
-| `resume` | Resume the game. |
+| `/pause`  | Pause the game.  |
+| `/resume` | Resume the game. |
 
 ### Server Command
 
 | Command  | Description      |
 | -------- | ---------------- |
-| `pause`  | Pause the game.  |
-| `resume` | Resume the game. |
+| `/pause`  | Pause the game.  |
+| `/resume` | Resume the game. |
 
 ## License
 
 ```text
-MIT License
-
 Copyright (c) 2020 Seungjae Park
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
