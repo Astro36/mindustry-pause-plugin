@@ -1,9 +1,9 @@
 import arc.Events
 import arc.util.CommandHandler
-import arc.util.Log
 import arc.util.Time
 import mindustry.Vars
 import mindustry.core.GameState
+import mindustry.entities.type.Player
 import mindustry.game.EventType
 import mindustry.gen.Call
 import mindustry.plugin.Plugin
@@ -24,22 +24,30 @@ public class PausePlugin : Plugin() {
     }
 
     override fun registerClientCommands(handler: CommandHandler) {
-        handler.register("pause", "Pause the game.") {
-            executePauseCommand()
+        handler.register("pause", "Pause the game.") { _, player: Player ->
+            if (player.isAdmin) {
+                executePauseCommand(player)
+            } else {
+                Printer.warn(player, "You are not authorized to use this command.")
+            }
         }
 
-        handler.register("resume", "Resume the game.") {
-            executeResumeCommand()
+        handler.register("resume", "Resume the game.") { _, player: Player ->
+            if (player.isAdmin) {
+                executeResumeCommand(player)
+            } else {
+                Printer.warn(player, "You are not authorized to use this command.")
+            }
         }
     }
 
     override fun registerServerCommands(handler: CommandHandler) {
-        handler.register("pause", "Pause the game. The server must be open to use this command.") {
-            executePauseCommand()
+        handler.register("pause", "Pause the game. This command can only be used when the server is open.") {
+            executePauseCommand(null)
         }
 
-        handler.register("resume", "Resume the game. The server must be open to use this command.") {
-            executeResumeCommand()
+        handler.register("resume", "Resume the game. This command can only be used when the server is open.") {
+            executeResumeCommand(null)
         }
     }
 
@@ -58,9 +66,8 @@ public class PausePlugin : Plugin() {
         }
     }
 
-    private fun injectPausableGameState() {
+    private fun injectPausable() {
         if (Vars.state !is PausableGameState) {
-            Log.info("copy and change")
             Vars.state = PausableGameState.copyFrom(Vars.state)
         }
     }
@@ -68,14 +75,15 @@ public class PausePlugin : Plugin() {
     private fun pauseGame() {
         when (Vars.state.state) {
             GameState.State.playing -> {
-                injectPausableGameState()
+                injectPausable()
+                forceSync(true)
                 forceGameState(GameState.State.paused)
             }
             GameState.State.paused -> {
                 throw PauseException("The game is already paused.")
             }
             else -> {
-                throw PauseException("The server must be open to use this command.")
+                throw PauseException("This command can only be used when the server is open.")
             }
         }
     }
@@ -90,36 +98,46 @@ public class PausePlugin : Plugin() {
                 throw PauseException("The game is already resumed.")
             }
             else -> {
-                throw PauseException("The server must be open to use this command.")
+                throw PauseException("This command can only be used when the server is open.")
             }
         }
     }
 
-    private fun executePauseCommand() {
+    private fun executePauseCommand(actor: Player?) {
         try {
             pauseGame()
-            Call.sendMessage("[scarlet]Game paused.")
-            Log.info("Game paused.")
+            Printer.info("Game paused by ${actor?.name ?: "host"}.")
         } catch (e: PauseException) {
-            Call.sendMessage("[orange]${e.message}")
-            Log.warn(e.message)
+            if (actor != null) {
+                Printer.warn(actor, e.message.toString())
+            } else {
+                Printer.warn(e.message.toString())
+            }
         } catch (e: Exception) {
-            Call.sendMessage("[crimson]Fail to pause the game.")
-            Log.err("Fail to pause the game.")
+            if (actor != null) {
+                Printer.error(actor, "Fail to pause the game.")
+            } else {
+                Printer.error("Fail to pause the game.")
+            }
         }
     }
 
-    private fun executeResumeCommand() {
+    private fun executeResumeCommand(actor: Player?) {
         try {
             resumeGame()
-            Call.sendMessage("[green]Game resumed.")
-            Log.info("Game resumed.")
+            Printer.info("Game resumed by ${actor?.name ?: "host"}.")
         } catch (e: PauseException) {
-            Call.sendMessage("[orange]${e.message}")
-            Log.warn(e.message)
+            if (actor != null) {
+                Printer.warn(actor, e.message.toString())
+            } else {
+                Printer.warn(e.message.toString())
+            }
         } catch (e: Exception) {
-            Call.sendMessage("[crimson]Fail to pause the game.")
-            Log.err("Fail to resume the game.")
+            if (actor != null) {
+                Printer.error(actor, "Fail to resume the game.")
+            } else {
+                Printer.error("Fail to resume the game.")
+            }
         }
     }
 }
