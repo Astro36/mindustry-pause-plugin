@@ -12,7 +12,7 @@ See [CHANGELOG](./CHANGELOG.md)
 
 ## Installation
 
-Place the plugin(jar) file in the server's `config/mods` directory and restart the server.
+Place the [plugin(jar)](https://github.com/Astro36/mindustry-pause-plugin/releases/latest) file in the server's `config/mods` directory and restart the server.
 
 ## Usages
 
@@ -20,15 +20,29 @@ Place the plugin(jar) file in the server's `config/mods` directory and restart t
 
 | Command  | Description      |
 | -------- | ---------------- |
-| `/pause`  | Pause the game.  |
-| `/resume` | Resume the game. |
+| pause    | Pause the game.  |
+| resume   | Resume the game. |
 
 ### Server Command
 
 | Command  | Description      |
 | -------- | ---------------- |
-| `/pause`  | Pause the game.  |
-| `/resume` | Resume the game. |
+| pause    | Pause the game.  |
+| resume   | Resume the game. |
+
+### Config
+
+Server's `config/mods/pause.json` file:
+
+```json
+{
+    "pauseAuto": true,
+    "pausePermission": "ADMIN_ONLY"
+}
+```
+
+- `pauseAuto`: If `pauseAuto` is true, the game will pause automatically when no one is in the world.
+- `pausePermission`: Set the user's level to use the command. (`ALL` or `ADMIN_ONLY`)
 
 ## License
 
