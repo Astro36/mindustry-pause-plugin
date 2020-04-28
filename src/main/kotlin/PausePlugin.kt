@@ -1,15 +1,19 @@
 import arc.Events
 import arc.util.CommandHandler
 import arc.util.Time
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonConfiguration
 import mindustry.Vars
 import mindustry.core.GameState
 import mindustry.entities.type.Player
 import mindustry.game.EventType
 import mindustry.gen.Call
 import mindustry.plugin.Plugin
+import java.io.File
 
 
-public class PausePlugin : Plugin() {
+class PausePlugin : Plugin() {
+    private var config = loadConfig()
     private var lastForceSync = 0L
 
     init {
@@ -21,11 +25,25 @@ public class PausePlugin : Plugin() {
                 }
             }
         }
+
+        Events.on(EventType.PlayerJoin::class.java) {
+            if (config.pauseAuto && Vars.playerGroup.isEmpty && Vars.state.isPaused) {
+                executeResumeCommand(null)
+            }
+        }
+
+        Events.on(EventType.PlayerLeave::class.java) {
+            if (config.pauseAuto && Vars.playerGroup.size() == 1 && !Vars.state.isPaused) {
+                executePauseCommand(null)
+            }
+        }
     }
 
     override fun registerClientCommands(handler: CommandHandler) {
         handler.register("pause", "Pause the game.") { _, player: Player ->
-            if (player.isAdmin) {
+            if (config.pausePermission == Permission.ALL
+                || (config.pausePermission == Permission.ADMIN_ONLY && player.isAdmin)
+            ) {
                 executePauseCommand(player)
             } else {
                 Printer.warn(player, "You are not authorized to use this command.")
@@ -33,7 +51,9 @@ public class PausePlugin : Plugin() {
         }
 
         handler.register("resume", "Resume the game.") { _, player: Player ->
-            if (player.isAdmin) {
+            if (config.pausePermission == Permission.ALL
+                || (config.pausePermission == Permission.ADMIN_ONLY && player.isAdmin)
+            ) {
                 executeResumeCommand(player)
             } else {
                 Printer.warn(player, "You are not authorized to use this command.")
@@ -138,6 +158,20 @@ public class PausePlugin : Plugin() {
             } else {
                 Printer.error("Fail to resume the game.")
             }
+        }
+    }
+
+    private fun loadConfig(): Config {
+        val json = Json(JsonConfiguration.Stable)
+        val pluginFileURI = javaClass.protectionDomain.codeSource.location.toURI()
+        val pluginDirectory = File(pluginFileURI).parentFile
+        val configFile = File(pluginDirectory, "pause.json")
+        if (configFile.exists()) {
+            return json.parse(Config.serializer(), configFile.readText())
+        }
+        return Config().also {
+            val configString = json.stringify(Config.serializer(), it)
+            configFile.writeText(configString)
         }
     }
 }
