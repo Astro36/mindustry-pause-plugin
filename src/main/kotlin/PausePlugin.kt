@@ -12,9 +12,9 @@ import mindustry.plugin.Plugin
 import java.io.File
 
 
-class PausePlugin : Plugin() {
-    private var config = loadConfig()
+public class PausePlugin : Plugin() {
     private var lastForceSync = 0L
+    public var config = loadConfig()
 
     init {
         Events.on(EventType.Trigger.update) {
@@ -92,37 +92,6 @@ class PausePlugin : Plugin() {
         }
     }
 
-    private fun pauseGame() {
-        when (Vars.state.state) {
-            GameState.State.playing -> {
-                injectPausable()
-                forceSync(true)
-                forceGameState(GameState.State.paused)
-            }
-            GameState.State.paused -> {
-                throw PauseException("The game is already paused.")
-            }
-            else -> {
-                throw PauseException("This command can only be used when the server is open.")
-            }
-        }
-    }
-
-    private fun resumeGame() {
-        when (Vars.state.state) {
-            GameState.State.paused -> {
-                forceGameState(GameState.State.playing)
-                forceSync(true)
-            }
-            GameState.State.playing -> {
-                throw PauseException("The game is already resumed.")
-            }
-            else -> {
-                throw PauseException("This command can only be used when the server is open.")
-            }
-        }
-    }
-
     private fun executePauseCommand(actor: Player?) {
         try {
             pauseGame()
@@ -161,7 +130,7 @@ class PausePlugin : Plugin() {
         }
     }
 
-    private fun loadConfig(): Config {
+    public fun loadConfig(): Config {
         val json = Json(JsonConfiguration.Stable)
         val pluginFileURI = javaClass.protectionDomain.codeSource.location.toURI()
         val pluginDirectory = File(pluginFileURI).parentFile
@@ -172,6 +141,37 @@ class PausePlugin : Plugin() {
         return Config().also {
             val configString = json.stringify(Config.serializer(), it)
             configFile.writeText(configString)
+        }
+    }
+
+    public fun pauseGame() {
+        when (Vars.state.state) {
+            GameState.State.playing -> {
+                injectPausable()
+                forceSync(true)
+                forceGameState(GameState.State.paused)
+            }
+            GameState.State.paused -> {
+                throw PauseException("The game is already paused.")
+            }
+            else -> {
+                throw PauseException("This command can only be used when the server is open.")
+            }
+        }
+    }
+
+    public fun resumeGame() {
+        when (Vars.state.state) {
+            GameState.State.paused -> {
+                forceGameState(GameState.State.playing)
+                forceSync(true)
+            }
+            GameState.State.playing -> {
+                throw PauseException("The game is already resumed.")
+            }
+            else -> {
+                throw PauseException("This command can only be used when the server is open.")
+            }
         }
     }
 }
