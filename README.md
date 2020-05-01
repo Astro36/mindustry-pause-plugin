@@ -1,6 +1,6 @@
 # Mindustry Pause Plugin
 
-> [Mindustry](https://mindustrygame.github.io/) Server Plugin: Add Commands to Pause and Resume the Game on Server
+> [Mindustry](https://mindustrygame.github.io/) Server Plugin: Enable the Game Pause on the Multiplay Server
 
 ## ChangeLog
 
@@ -9,6 +9,7 @@ See [CHANGELOG](./CHANGELOG.md)
 ## Features
 
 - Add `/pause` and `/resume`.
+- Auto pause the game when server is empty.
 
 ## Installation
 
