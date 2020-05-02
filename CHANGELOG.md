@@ -1,5 +1,13 @@
 # Changelog
 
+## v1.2
+
+Released May 2, 2020
+
+### Removed
+
+- Removed unused classes from the build output using [Gradle Shadow](https://imperceptiblethoughts.com/shadow/).
+
 ## v1.1
 
 Released Apr 28, 2020
