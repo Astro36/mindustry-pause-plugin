@@ -1,6 +1,7 @@
 plugins {
     kotlin("jvm") version "1.3.72"
     kotlin("plugin.serialization") version "1.3.72"
+    id("com.github.johnrengelman.shadow") version "5.2.0"
 }
 
 repositories {
@@ -25,6 +26,12 @@ tasks {
     }
 
     jar {
-        from(configurations.compileClasspath.get().map { if (it.isDirectory) it else zipTree(it) })
+        enabled = false // disable original task
+        dependsOn(shadowJar) // add new task
+    }
+
+    shadowJar {
+        archiveClassifier.set("") // remove jar classifier
+        minimize() // remove unused classes
     }
 }
