@@ -1,1 +1,1 @@
-public class PauseException(message: String) : Exception(message)
+class PauseException(message: String) : Exception(message)

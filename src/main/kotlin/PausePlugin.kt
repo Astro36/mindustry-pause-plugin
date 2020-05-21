@@ -12,9 +12,9 @@ import mindustry.plugin.Plugin
 import java.io.File
 
 
-public class PausePlugin : Plugin() {
+class PausePlugin : Plugin() {
     private var lastForceSync = 0L
-    public var config = loadConfig()
+    var config = loadConfig()
 
     init {
         Events.on(EventType.Trigger.update) {
@@ -42,7 +42,7 @@ public class PausePlugin : Plugin() {
     override fun registerClientCommands(handler: CommandHandler) {
         handler.register("pause", "Pause the game.") { _, player: Player ->
             if (config.pausePermission == Permission.ALL
-                || (config.pausePermission == Permission.ADMIN_ONLY && player.isAdmin)
+                    || (config.pausePermission == Permission.ADMIN_ONLY && player.isAdmin)
             ) {
                 executePauseCommand(player)
             } else {
@@ -52,7 +52,7 @@ public class PausePlugin : Plugin() {
 
         handler.register("resume", "Resume the game.") { _, player: Player ->
             if (config.pausePermission == Permission.ALL
-                || (config.pausePermission == Permission.ADMIN_ONLY && player.isAdmin)
+                    || (config.pausePermission == Permission.ADMIN_ONLY && player.isAdmin)
             ) {
                 executeResumeCommand(player)
             } else {
@@ -130,7 +130,7 @@ public class PausePlugin : Plugin() {
         }
     }
 
-    public fun loadConfig(): Config {
+    fun loadConfig(): Config {
         val json = Json(JsonConfiguration.Stable)
         val pluginFileURI = javaClass.protectionDomain.codeSource.location.toURI()
         val pluginDirectory = File(pluginFileURI).parentFile
@@ -144,7 +144,7 @@ public class PausePlugin : Plugin() {
         }
     }
 
-    public fun pauseGame() {
+    fun pauseGame() {
         when (Vars.state.state) {
             GameState.State.playing -> {
                 injectPausable()
@@ -160,7 +160,7 @@ public class PausePlugin : Plugin() {
         }
     }
 
-    public fun resumeGame() {
+    fun resumeGame() {
         when (Vars.state.state) {
             GameState.State.paused -> {
                 forceGameState(GameState.State.playing)

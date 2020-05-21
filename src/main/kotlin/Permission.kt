@@ -1,4 +1,4 @@
-public enum class Permission {
+enum class Permission {
     ALL,
     ADMIN_ONLY,
 }

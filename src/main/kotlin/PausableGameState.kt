@@ -1,9 +1,9 @@
 import mindustry.Vars
 import mindustry.core.GameState
 
-public class PausableGameState : GameState() {
+class PausableGameState : GameState() {
     companion object {
-        public fun copyFrom(state: GameState): PausableGameState {
+        fun copyFrom(state: GameState): PausableGameState {
             return PausableGameState().apply {
                 wave = state.wave
                 wavetime = state.wavetime
