@@ -2,6 +2,10 @@
 
 > [Mindustry](https://mindustrygame.github.io/) Server Plugin: Enable the Game Pause on the Multiplay Server
 
+> **Note: This plugin is deprecated since [Mindustry v105(6.0 Build 105)](https://github.com/Anuken/Mindustry/commit/88608b3f889d4ec2cfe54f1561f64f7f89de300a).**
+>
+> **Use official server pause command instead: `$ pause <on/off>`**
+
 ## ChangeLog
 
 See [CHANGELOG](./CHANGELOG.md)
